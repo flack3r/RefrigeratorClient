@@ -104,14 +104,22 @@ public class UI {
 		// System.out.println("=========Menu=========");
 
 		if (isAuthority())
+		{
 			System.out.println("1.User Manage");
+		}
 		else
+		{
 			System.out.println("1.User Info");
+		}
 
-		System.out.println("2.Register Food");
-		System.out.println("3.Edit Food");
-		System.out.println("4.Memo");
-		System.out.println("5.Logout");
+		System.out.println("2.Show message");
+		System.out.println("3.Register Food");
+		System.out.println("4.Edit Food");
+		System.out.println("5.Memo");
+		if (isAuthority())
+		{
+			System.out.println("6.Old Memo Delete");
+		}
 		System.out.println("0.Exit");
 		System.out.print("What do you want?(choose number)> ");
 
@@ -126,25 +134,28 @@ public class UI {
 						UserManage();
 					else
 						UserInfo();
-					choice = 5;
 					break;
 				case 2:
-					FoodRegister();
+					GetMessage();
 					break;
 				case 3:
-					FoodEdit();
+					FoodRegister();
 					break;
 				case 4:
-					Memo();
+					FoodEdit();
 					break;
 				case 5:
-					choice = 1;
+					Memo();
+					break;
+				case 6:
+					if(isAuthority())
+						MemoDelete();
 					break;
 				default:
-					System.out.print("Choose number between 0 and 5 > ");
+					System.out.print("Choose number> ");
 					break;
 				}
-		}while (choice < 0 || choice > 5);
+		}while (choice < 0 || choice > 6);
 
 		return choice;
 	}
@@ -169,6 +180,11 @@ public class UI {
 	 * User 삭제 else if (choice == 7) { UserDelete(); } // User 등록 else if
 	 * (choice == 8) { UserRegister(); } } return choice; }
 	 */
+	private void MemoDelete()
+	{
+		client.handleMessageFromClientUI("MSG_DELETEOLD");
+		WaitResponse();
+	}
 
 	private void UserManage() {
 

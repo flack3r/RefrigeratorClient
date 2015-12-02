@@ -30,39 +30,17 @@ public class Packet implements ChatIF {
 			// String message;
 			int result = 0;
 			System.out.println("Welcome to HW_Refrigerator_System!");
+			// [stage1] Login
+			ui.Login();
+			
+			// [stage2] Get Message
+			ui.GetMessage();
 			while (true) {
-				// [stage1] Login
-				if (ui.GetStatus().equals(UserStatus.LOGIN)
-						|| ui.GetStatus().equals(UserStatus.LOGIN_FAIL))
-					ui.Login();
-
-				if (ui.GetStatus().equals(UserStatus.MENU)) {
-					// [stage2] show MsgList
-					System.out
-							.println("~~~~~~~~~~HW REFRIGERATOR MANAGER~~~~~~~~~~");
-					System.out
-							.println("=Message===================================");
-					ui.GetMessage();
-					System.out
-							.println("===========================================");
-					// [stage3] show FoodList
-					// ui.GetFood();
-					result = ui.Menu();
-					if (result == 0)
-						break;
-					else if (result == 1) {
-						ui.SetStatus(UserStatus.LOGIN);
-// p@ 로그아웃 구현해야됨 스트림예외문제
-					}
-
-					/*
-					 * 
-					 * while (true) { // [stage4] Menu //result = ui.Menu(); if
-					 * (result == 1) { ui.SetStatus(UserStatus.LOGIN); break;
-					 * 
-					 * } }
-					 */
-				}
+				// [stage3] show FoodList
+				// ui.GetFood();
+				result = ui.Menu();
+				if (result == 0)
+					break;
 			}
 			System.exit(0);
 		} catch (Exception ex) {
@@ -185,10 +163,9 @@ public class Packet implements ChatIF {
 			String cmd2 = Packet[1];
 			if (cmd2.equals("SHOW")) {
 				String Mlist = Packet[2];
-				//System.out.println("-----Message List-----");
+				System.out.println("-----Message List-----");
 				System.out.println(Mlist);
 				ui.SetStatus(UserStatus.MSG_LOAD);
-				/*p@ 메모*/
 			} else if (cmd2.equals("MEMO")) {
 				String result = Packet[2];
 				if (result.equals("TRUE")) {
