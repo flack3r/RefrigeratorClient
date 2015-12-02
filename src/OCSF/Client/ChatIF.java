@@ -2,7 +2,7 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-package common;
+package OCSF.Client;
 
 /**
  * This interface implements the abstract method used to display

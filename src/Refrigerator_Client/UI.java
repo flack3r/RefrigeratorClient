@@ -1,9 +1,11 @@
+package Refrigerator_Client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
-import client.ChatClient;
+import OCSF.Common.ChatClient;
 
 public class UI {
 	private ChatClient client;
@@ -135,8 +137,7 @@ public class UI {
 					else
 						UserInfo();
 					break;
-				case 2:
-					GetMessage();
+				case 2:GetMessage();
 					break;
 				case 3:
 					FoodRegister();
@@ -209,10 +210,12 @@ public class UI {
 				break;
 			case 2:
 				System.out.print("-->modify user");
+				GetUser();
 				UserModify();
 				break;
 			case 3:
 				System.out.print("-->delete user");
+				GetUser();
 				UserDelete();
 				break;
 			default:
@@ -263,15 +266,17 @@ public class UI {
 		System.out.print("How to modify(1.pw, 2.name) : ");
 		select = Integer.parseInt(GetConsole());
 
-		while (select < 1 || select > 2) {
+		for(;;) {
 			if (select == 1) {
 				change = "pw";
 				System.out.print("Change pw : ");
 				change_data = GetConsole();
+				break;
 			} else if (select == 2) {
 				change = "name";
 				System.out.print("Change name : ");
 				change_data = GetConsole();
+				break;
 			} else {
 				System.out.print("pw:1! name:2! try again! : ");
 				select = Integer.parseInt(GetConsole());
@@ -304,22 +309,25 @@ public class UI {
 		int select;
 		String change = "";
 		String change_data = "";
-		System.out.println("->User Info\nID\tPW\tName");
+		System.out.println("->User Info\nID\tPW\t\tName");
 		System.out.println(id + "\t********\t" + name);
 		// p@ 보류 getUser(id);
 		System.out
 				.print("1.change pw 2.change name\nChange what?(choose number)>");
 		select = Integer.parseInt(GetConsole());
 
-		while (select < 1 || select > 2) {
+		for(;;)
+		{
 			if (select == 1) {
 				change = "pw";
 				System.out.print("Change pw : ");
 				change_data = GetConsole();
+				break;
 			} else if (select == 2) {
 				change = "name";
 				System.out.print("Change name : ");
 				change_data = GetConsole();
+				break;
 			} else {
 				System.out.print("pw:1! name:2! try again! : ");
 				select = Integer.parseInt(GetConsole());
@@ -371,12 +379,23 @@ public class UI {
 		System.out.print("Location(floor) : ");
 		floor = GetConsole();
 
-		System.out.print("expirationDate(YYYY/MM/DD) : ");
-		expirationDate = GetConsole();
-
+		for(;;)
+		{
+			System.out.print("expirationDate(YYYY/MM/DD) : ");
+			expirationDate = GetConsole();
+			try
+			{
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+				formatter.parse(expirationDate);
+				break;
+			}
+			catch(ParseException pe)
+			{
+				System.err.print("Wrong date input. " );
+			}
+		}
 		System.out.print("memo : ");
 		memo = GetConsole();
-
 		
 
 		/* p@ 이런 방식 말고 다른 방식으로 데이터 파라미터를 서버에 전달했으면 좋겠습니다. */
@@ -388,19 +407,23 @@ public class UI {
 	}
 
 	private void FoodEdit() {
-		Scanner input = new Scanner(System.in);
 		int select;
 
 		System.out.println("->Edit Food");
 		System.out.println("-Food--------------");
-		GetUser();
+		GetFood();
+		if(GetStatus()==UserStatus.FOOD_EMPTY)
+		{
+			this.SetStatus(UserStatus.MENU);
+			return;
+		}
 		System.out.println("-------------------");
 		System.out
 				.println("1.search food\t2.modify food\t3.delete food\t0.back");
 		System.out.print("For what?(choose number)>");
 
 		do {
-			select = input.nextInt();
+			select = Integer.parseInt(this.GetConsole());
 
 			switch (select) {
 			case 0:
@@ -423,8 +446,6 @@ public class UI {
 				break;
 			}
 		} while (select < 0);
-		input.close();
-
 	}
 
 	public void FoodModify() {
@@ -435,7 +456,14 @@ public class UI {
 		String change = "";
 		String change_data;
 
-		System.out.print("Insert Foodname for Modify : ");
+		GetFood();
+		if(GetStatus()==UserStatus.FOOD_EMPTY)
+		{
+			this.SetStatus(UserStatus.MENU);
+			return;
+		}
+		
+		System.out.print("Insert idx for Modify : ");
 		foodname = GetConsole();
 		System.out.println("How to modify?");
 		System.out
@@ -501,7 +529,7 @@ public class UI {
 		String name;
 
 		// System.out.println("[*]Food Delete Menu selected");
-		System.out.print("Delete Food Name :");
+		System.out.print("Delete Food Number :");
 		name = GetConsole();
 		
 		client.handleMessageFromClientUI("FOOD_DELETE_" + name);
@@ -523,10 +551,20 @@ public class UI {
 	private void Memo() {
 		//Scanner scan = new Scanner(System.in);
 		String message;
-
+		int idx = 0;
+		GetFood();
+		if(GetStatus()==UserStatus.FOOD_EMPTY)
+		{
+			this.SetStatus(UserStatus.MENU);
+			return;
+		}
+		System.out.println("Write Food number: ");
+		idx = Integer.parseInt(GetConsole());
+		
 		System.out.print("Write Memo:");
 		message = GetConsole();
-		client.handleMessageFromClientUI("MSG_MEMO_" + message);
+		
+		client.handleMessageFromClientUI("MSG_MEMO_" +idx+"_"+ message);
 
 		WaitResponse();
 	}
@@ -562,6 +600,10 @@ public class UI {
 
 			if (GetStatus() == UserStatus.FOOD_LOAD) {
 				SetStatus(UserStatus.MENU);
+				break;
+			}
+			else if(GetStatus() == UserStatus.FOOD_EMPTY)
+			{
 				break;
 			}
 		}
