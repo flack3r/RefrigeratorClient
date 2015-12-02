@@ -1,4 +1,6 @@
-import java.io.Console;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 import client.ChatClient;
@@ -10,10 +12,24 @@ public class UI {
 	private String name;
 	private boolean authority;
 	private UserStatus status;
+	private BufferedReader scan;
 	
 	public UI(ChatClient c) {
+		scan = new BufferedReader(new InputStreamReader(System.in));
 		client = c;
 		status = UserStatus.LOGIN;
+	}
+	
+	String GetConsole()
+	{
+		String tmp = "";
+		try {
+			tmp = scan.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tmp;
 	}
 
 	public UserStatus GetStatus() {
@@ -42,22 +58,20 @@ public class UI {
 
 	public void Login() {
 		if (GetStatus() == UserStatus.LOGIN) {
-
-			// Scanner scan = new Scanner(System.in);
-			// System.out.print("ID : ");
-			// id = scan.nextLine();
-			// System.out.print("PW : ");
-			// pw = scan.nextLine();
-
+			 //Scanner scan = new Scanner(System.in);
+			System.out.print("ID : ");
+			id = GetConsole();
+			System.out.print("PW : ");
+			pw = GetConsole();
 			/*
 			 * p@ 클라이언트를 cmd에서 돌려야 작동(eclipse에서는 안됨ㅠ); 이클립스에서 구동하려면 위에 5줄 주석 해제,
 			 * 밑에 6줄 주석처리
 			 */
-			Console secret = System.console();
-			if (secret == null)
-				System.err.println("Console fail");
-			id = secret.readLine("%s", "ID : ");
-			pw = new String(secret.readPassword("%s", "PW : "));			
+//			Console secret = System.console();
+//			if (secret == null)
+//				System.err.println("Console fail");
+//			id = secret.readLine("%s", "ID : ");
+//			pw = new String(secret.readPassword("%s", "PW : "));			
 
 			client.handleMessageFromClientUI("LOGIN_" + id + "_" + pw);
 			WaitLogin();
@@ -84,8 +98,8 @@ public class UI {
 	}
 
 	public int Menu() {
-		Scanner scan = new Scanner(System.in);		
-		int choice;
+		//Scanner scan = new Scanner(System.in);		
+		int choice=0;
 		
 		// System.out.println("=========Menu=========");
 
@@ -102,38 +116,36 @@ public class UI {
 		System.out.print("What do you want?(choose number)> ");
 
 		do {
-			choice = scan.nextInt();
-			scan.nextLine();
-			switch (choice) {
-			case 0:
-				choice = 0;
-				break;
-			case 1:
-				if (isAuthority())
-					UserManage();
-				else
-					UserInfo();
-				choice = 5;
-				break;
-			case 2:
-				FoodRegister();
-				break;
-			case 3:
-				FoodEdit();
-				break;
-			case 4:
-				Memo();
-				break;
-			case 5:
-				choice = 1;
-				break;
-			default:
-				System.out.print("Choose number between 0 and 5 > ");
-				break;
-			}
-		} while (choice < 0 || choice > 5);
+				choice = Integer.parseInt(GetConsole());
+				switch (choice) {
+				case 0:
+					choice = 0;
+					break;
+				case 1:
+					if (isAuthority())
+						UserManage();
+					else
+						UserInfo();
+					choice = 5;
+					break;
+				case 2:
+					FoodRegister();
+					break;
+				case 3:
+					FoodEdit();
+					break;
+				case 4:
+					Memo();
+					break;
+				case 5:
+					choice = 1;
+					break;
+				default:
+					System.out.print("Choose number between 0 and 5 > ");
+					break;
+				}
+		}while (choice < 0 || choice > 5);
 
-		scan.close();
 		return choice;
 	}
 
@@ -147,7 +159,7 @@ public class UI {
 	 * p@ 위에 것으로 대체합니다 // 로그아웃 if (choice == 1) { if (id.equals("admin")) {
 	 * GetUser(); System.out .print(
 	 * "How to manage User?(register user : 1, modify user : 2, delete user : 3, back : 0) : "
-	 * ); do { choice = scan.nextInt(); if (choice == 1) UserRegister(); else if
+	 * ); do { choice = Integer.parseInt(GetConsole()); if (choice == 1) UserRegister(); else if
 	 * (choice == 2) UserModify(); else if (choice == 3) UserDelete(); } while
 	 * (choice > 3); } else System.out.println("1.User Info"); return choice; }
 	 * // 음식 변경 else if (choice == 2) { FoodModify(); } // 음식 삭제 else if (choice
@@ -160,7 +172,7 @@ public class UI {
 
 	private void UserManage() {
 
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		int select;
 
 		System.out.println("->User Manage");
@@ -170,10 +182,8 @@ public class UI {
 		System.out
 				.println("1.register user\t2.modify user\t3.delete user\t0.back");
 		System.out.print("How to manage?(choose number)>");
-
 		do {
-			select = scan.nextInt();
-			scan.nextLine();
+			select = Integer.parseInt(GetConsole());
 			switch (select) {
 			case 0:
 				break;
@@ -194,47 +204,37 @@ public class UI {
 				select = -1;
 				break;
 			}
-		} while (select < 0);
-		scan.close();
+		}while (select < 0);
 	}
 
 	public void UserRegister() {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		String id;
 		String pw;
-		String name="";
-		String prev="";
+		String name;
 		int select;		
 
 		System.out.print("Insert New ID : ");
-		id = scan.nextLine();
+		id = GetConsole();
 		System.out.print("Insert New PW : ");
-		pw = scan.nextLine();
+		pw = GetConsole();
 		System.out.print("Insert New Name : ");
-		pw = scan.nextLine();
+		name = GetConsole();
 		System.out.print("Select User Type(1.Normal 2.Administrator) : ");
-		select = scan.nextInt();
-		scan.nextLine();
+		select = Integer.parseInt(GetConsole());
 		while (select < 1 || select > 2) {
-			if (select == 1) 
-				prev = "NORMAL";
-			else if (select == 2)
-				prev = "ADMIN";
-			else {
-				System.out.print("pw:1! name:2! try again! : ");
-				select = scan.nextInt();
-				scan.nextLine();
-			}
+			System.out.print("pw:1! name:2! try again! : ");
+			select = Integer.parseInt(GetConsole());
 		}
-		scan.close();
-		client.handleMessageFromClientUI("USER_REGISTER_" + id + "_" + pw + "_" + name + "_" + prev);
+		String resultStr = "USER_REGISTER_" + id + "_" + pw + "_" + name + "_" + (select == 1 ? "NORMAL" : "ADMIN");
+		client.handleMessageFromClientUI(resultStr);
 		WaitResponse();
 	}
 
 	// UserModify
 	public void UserModify() {
 
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 
 		// change selection name, id, pw
 		String idx;
@@ -243,41 +243,39 @@ public class UI {
 		String change_data = "";
 
 		System.out.print("Select index : ");
-		idx = scan.nextLine();
+		idx = GetConsole();
 		System.out.print("How to modify(1.pw, 2.name) : ");
-		select = scan.nextInt();
+		select = Integer.parseInt(GetConsole());
 
 		while (select < 1 || select > 2) {
 			if (select == 1) {
 				change = "pw";
 				System.out.print("Change pw : ");
-				change_data = scan.nextLine();
+				change_data = GetConsole();
 			} else if (select == 2) {
 				change = "name";
 				System.out.print("Change name : ");
-				change_data = scan.nextLine();
+				change_data = GetConsole();
 			} else {
 				System.out.print("pw:1! name:2! try again! : ");
-				select = scan.nextInt();
+				select = Integer.parseInt(GetConsole());
 			}
 		}
-		scan.close();
 		client.handleMessageFromClientUI("USER_MODIFY_" + idx + "_" + change
 				+ "_" + change_data);
 		WaitResponse();
 	}
 
 	public void UserDelete() {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		String id = "";
 
 		System.out.print("Select index : ");
-		// id = scan.nextInt();
-		id = scan.nextLine();
+		// id = Integer.parseInt(GetConsole());
+		id = GetConsole();
 
 		// p@ id기반 삭제를 index기반 삭제로 바꾸어야 함
 
-		scan.close();
 		client.handleMessageFromClientUI("USER_DELETE_" + id);
 		WaitResponse();
 	}
@@ -286,7 +284,7 @@ public class UI {
 		/*
 		 * p@ 현재 사용자의 아이디 비밀번호 이름 출력 비밀번호, 이름 변경 가능 여유가 된다면 추가 정보 표현
 		 */
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		int select;
 		String change = "";
 		String change_data = "";
@@ -295,23 +293,23 @@ public class UI {
 		// p@ 보류 getUser(id);
 		System.out
 				.print("1.change pw 2.change name\nChange what?(choose number)>");
-		select = scan.nextInt();
+		select = Integer.parseInt(GetConsole());
 
 		while (select < 1 || select > 2) {
 			if (select == 1) {
 				change = "pw";
 				System.out.print("Change pw : ");
-				change_data = scan.nextLine();
+				change_data = GetConsole();
 			} else if (select == 2) {
 				change = "name";
 				System.out.print("Change name : ");
-				change_data = scan.nextLine();
+				change_data = GetConsole();
 			} else {
 				System.out.print("pw:1! name:2! try again! : ");
-				select = scan.nextInt();
+				select = Integer.parseInt(GetConsole());
 			}
 		}
-		scan.close();
+		
 		client.handleMessageFromClientUI("USER_INFO_" + id + "_" + change + "_"
 				+ change_data);
 		WaitResponse();
@@ -320,7 +318,7 @@ public class UI {
 	/* p@ 더 괜찮은 메세지 핸들방식 없을까요? */
 
 	public void FoodRegister() {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 
 		// 푸드에 대한 정보 insertedDate, isExpired, isProhibited 는 0으로 초기화
 		String foodname = "";
@@ -337,33 +335,33 @@ public class UI {
 		// String isProhibited = "0";
 
 		System.out.print("Food Name : ");
-		foodname = scan.nextLine();
+		foodname = GetConsole();
 
 		System.out.print("Quantity : ");
-		quantity = scan.nextLine();
+		quantity = GetConsole();
 		quantity = boundary_test(quantity);
 
 		System.out.print("Weight : ");
-		Weight = scan.nextLine();
+		Weight = GetConsole();
 		Weight = boundary_test(Weight);
 
 		System.out.print("Calries : ");
-		calories = scan.nextLine();
+		calories = GetConsole();
 		calories = boundary_test(calories);
 
 		System.out.print("FreezeType(1.Refregirator 2.freezer) : ");
-		freezeType = scan.nextLine();
+		freezeType = GetConsole();
 
 		System.out.print("Location(floor) : ");
-		floor = scan.nextLine();
+		floor = GetConsole();
 
 		System.out.print("expirationDate(YYYY/MM/DD) : ");
-		expirationDate = scan.nextLine();
+		expirationDate = GetConsole();
 
 		System.out.print("memo : ");
-		memo = scan.nextLine();
+		memo = GetConsole();
 
-		scan.close();
+		
 
 		/* p@ 이런 방식 말고 다른 방식으로 데이터 파라미터를 서버에 전달했으면 좋겠습니다. */
 
@@ -415,20 +413,20 @@ public class UI {
 
 	public void FoodModify() {
 
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		String foodname;
 		int select = 0;
 		String change = "";
 		String change_data;
 
 		System.out.print("Insert Foodname for Modify : ");
-		foodname = scan.nextLine();
+		foodname = GetConsole();
 		System.out.println("How to modify?");
 		System.out
 				.println("1.Quantity\t2.Weight\t3.Calories\t4.Location(Freezer/Cooler)\t5.Location(Floor)\t6.Memo\t0.Back");
-		select = scan.nextInt();
+		select = Integer.parseInt(GetConsole());
 		System.out.print("Change data : ");
-		change_data = scan.nextLine();
+		change_data = GetConsole();
 
 		switch (select) {
 		case 0:
@@ -462,7 +460,7 @@ public class UI {
 		// 번호로 사용할 경우
 		// client.handleMessageFromClientUI("FOOD_MODIFY_"+foodname+"_"+number+"_"+change_data);
 		// 문자열로 사용할 경우
-		scan.close();
+		
 		client.handleMessageFromClientUI("FOOD_MODIFY_" + foodname + "_"
 				+ change + "_" + change_data);
 		WaitResponse();
@@ -470,49 +468,48 @@ public class UI {
 
 	/* p@ 조금 다듬었습니다 */
 	public String boundary_test(String st1) {
-		Scanner scaner = new Scanner(System.in);
+		//Scanner scaner = new Scanner(System.in);
 		int num = Integer.parseInt(st1);
 
 		while (num < 0) {
 			System.out.print("Input a correct num >=0 : ");
-			num = scaner.nextInt();
+			num = Integer.parseInt(GetConsole());
 		}
-		scaner.close();
+		
 
 		return String.valueOf(num);
 	}
 
 	public void FoodDelete() {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		String name;
 
 		// System.out.println("[*]Food Delete Menu selected");
 		System.out.print("Delete Food Name :");
-		name = scan.nextLine();
-		scan.close();
+		name = GetConsole();
+		
 		client.handleMessageFromClientUI("FOOD_DELETE_" + name);
 		WaitResponse();
 	}
 
 	public void FoodSearch() {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		String name;
 
 		System.out.print("Insert Food Name for Search:");
-		name = scan.nextLine();
-		scan.close();
+		name = GetConsole();
+		
 		client.handleMessageFromClientUI("FOOD_SEARCH_" + name);
 
 		WaitResponse();
 	}
 
 	private void Memo() {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		String message;
 
 		System.out.print("Write Memo:");
-		message = scan.nextLine();
-		scan.close();
+		message = GetConsole();
 		client.handleMessageFromClientUI("MSG_MEMO_" + message);
 
 		WaitResponse();

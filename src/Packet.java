@@ -184,11 +184,9 @@ public class Packet implements ChatIF {
 		else if (cmd.equals("MSG")) {
 			String cmd2 = Packet[1];
 			if (cmd2.equals("SHOW")) {
-				/*
-				 * p@ String Mlist = Packet[2];
-				 * System.out.println("-----Message List-----");
-				 * System.out.println(Mlist);
-				 */
+				String Mlist = Packet[2];
+				//System.out.println("-----Message List-----");
+				System.out.println(Mlist);
 				ui.SetStatus(UserStatus.MSG_LOAD);
 				/*p@ ¸Þ¸ð*/
 			} else if (cmd2.equals("MEMO")) {
