@@ -347,7 +347,7 @@ public class UI {
 		// 푸드에 대한 정보 insertedDate, isExpired, isProhibited 는 0으로 초기화
 		String foodname = "";
 		String quantity = "";
-		String Weight = "";
+		String weight = "";
 		String calories = "";
 		String freezeType = "";
 		String floor = "";
@@ -360,22 +360,71 @@ public class UI {
 
 		System.out.print("Food Name : ");
 		foodname = GetConsole();
+		
+		for(;;)
+		{
+			try
+			{
+				System.out.print("Quantity : ");
+				quantity = GetConsole();
+				quantity = boundary_test(quantity);
+				break;
+			}
+			catch(Exception e)
+			{
+				System.err.print("Wrong input. Try again. ");
+			}
+		}
+		
+		for(;;)
+		{
+			try
+			{
+				System.out.print("Weight : ");
+				weight = GetConsole();
+				weight = boundary_test(weight);
+				break;
+			}
+			catch(Exception e)
+			{
+				System.err.print("Wrong input. Try again. ");
+			}
+		}
+		
+		for(;;)
+		{
+			try
+			{
+				System.out.print("Calories : ");
+				calories = GetConsole();
+				calories = boundary_test(calories);
+				break;
+			}
+			catch(Exception e)
+			{
+				System.err.print("Wrong input. Try again. ");
+			}
+		}
 
-		System.out.print("Quantity : ");
-		quantity = GetConsole();
-		quantity = boundary_test(quantity);
-
-		System.out.print("Weight : ");
-		Weight = GetConsole();
-		Weight = boundary_test(Weight);
-
-		System.out.print("Calries : ");
-		calories = GetConsole();
-		calories = boundary_test(calories);
-
-		System.out.print("FreezeType(1.Refregirator 2.freezer) : ");
-		freezeType = GetConsole();
-
+		for(;;)
+		{
+			try
+			{
+				int temp = -1;
+				System.out.print("FreezeType(1.Cooler 2.Freezer) : ");
+				freezeType = GetConsole();
+				temp = Integer.parseInt(freezeType);
+				if(temp == 1 || temp == 2)
+					break;
+				else
+					throw new NumberFormatException("Wrong input");
+			}
+			catch(Exception e)
+			{
+				System.err.print("Wrong input. Try again. ");
+			}
+		}
+		
 		System.out.print("Location(floor) : ");
 		floor = GetConsole();
 
@@ -394,6 +443,7 @@ public class UI {
 				System.err.print("Wrong date input. " );
 			}
 		}
+		
 		System.out.print("memo : ");
 		memo = GetConsole();
 		
@@ -401,7 +451,7 @@ public class UI {
 		/* p@ 이런 방식 말고 다른 방식으로 데이터 파라미터를 서버에 전달했으면 좋겠습니다. */
 
 		client.handleMessageFromClientUI("FOOD_REGISTER_" + foodname + "_"
-				+ quantity + "_" + Weight + "_" + calories + "_" + freezeType
+				+ quantity + "_" + weight + "_" + calories + "_" + freezeType
 				+ "_" + floor + "_" + expirationDate + "_" + memo);
 		WaitResponse();
 	}
@@ -423,8 +473,15 @@ public class UI {
 		System.out.print("For what?(choose number)>");
 
 		do {
-			select = Integer.parseInt(this.GetConsole());
-
+			try
+			{
+				select = Integer.parseInt(this.GetConsole());
+			}
+			catch (Exception e)
+			{
+				select = -1;
+			}
+			
 			switch (select) {
 			case 0:
 				break;
@@ -454,7 +511,7 @@ public class UI {
 		String foodname;
 		int select = 0;
 		String change = "";
-		String change_data;
+		String change_data = "";
 
 		GetFood();
 		if(GetStatus()==UserStatus.FOOD_EMPTY)
@@ -469,26 +526,37 @@ public class UI {
 		System.out
 				.println("1.Quantity\t2.Weight\t3.Calories\t4.Location(Freezer/Cooler)\t5.Location(Floor)\t6.Memo\t0.Back");
 		select = Integer.parseInt(GetConsole());
-		System.out.print("Change data : ");
-		change_data = GetConsole();
 
 		switch (select) {
 		case 0:
-			// back
+			return;
 		case 1:
 			change = "quantity";
+			System.out.print("Change data : ");
+			change_data = GetConsole();
 			change_data = boundary_test(change_data);
 			break;
 		case 2:
 			change = "weight";
+			System.out.print("Change data : ");
+			change_data = GetConsole();
 			change_data = boundary_test(change_data);
 			break;
 		case 3:
 			change = "calaries";
+			System.out.print("Change data : ");
+			change_data = GetConsole();
 			change_data = boundary_test(change_data);
 			break;
 		case 4:
 			change = "freezeType";
+			for(;;)
+			{
+				System.out.print("Change data ( Cooler / Freezer ) : ");
+				change_data = GetConsole();
+				if(change_data.compareTo("Cooler") == 0 || change_data.compareTo("Freezer") == 0)
+					break;
+			}
 			break;
 		case 5:
 			change = "floor";
